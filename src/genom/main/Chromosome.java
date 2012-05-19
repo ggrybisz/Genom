@@ -29,7 +29,11 @@ public class Chromosome {
 
 	public void setGenes(int[] genes) {
 
-		this.genes = genes;
+		int [] gen = new int [genes.length] ;
+		for(int i = 0; i<genes.length;i++)
+			gen[i] = genes[i];
+		
+		this.genes = gen;
 	}
 
 	public int getGenesAsInt() {
@@ -46,6 +50,10 @@ public class Chromosome {
 	public int[] getGenesAsArray() {
 		return genes;
 	}
+	
+	public int getFenotype(){
+		return Function.xSquare(this.getGenesAsInt());
+	}
 
 	// Mutacja - zamiana losowego genu
 	public void mutate() {
@@ -54,7 +62,7 @@ public class Chromosome {
 		int mutationPoint = randomGenerator.nextInt(9);
 
 		genes[mutationPoint] = genes[mutationPoint] == 0 ? 1 : 0;
-
+		System.out.println("MUTATION occured at " + mutationPoint);
 	}
 
 	public Chromosome[] makeChildrenWith(Chromosome partner) {

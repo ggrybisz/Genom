@@ -1,6 +1,9 @@
 package genom.main;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Evolution {
@@ -31,9 +34,9 @@ public class Evolution {
 		for (int i = 0; i < SPECIMEN_COUNT; i++) {
 			int one = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
 			int two = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
-			while(one==two)
+			while (one == two)
 				two = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
-			
+
 			System.out.println(one + " with " + two);
 			Chromosome temp = generation[one]
 					.makeSingleChildWith(generation[two]);
@@ -49,10 +52,10 @@ public class Evolution {
 
 		int[] values = new int[n];
 		int sumOfValues = 0;
-		
+
 		int[] genes = new int[n];
-		
-		for(int i=0;i<n;i++){
+
+		for (int i = 0; i < n; i++) {
 			genes[i] = oldGeneration[i].getGenesAsInt();
 		}
 		System.out.println("GEN = " + Arrays.toString(genes));
@@ -129,5 +132,29 @@ public class Evolution {
 			}
 		}
 		return max;
+	}
+
+	public double getAverageFitness(Chromosome[] generation) {
+
+		int n = generation.length;
+		double sum = 0;
+		for (int i = 0; i < n; i++) {
+			int value = Function.xSquare(generation[i].getGenesAsInt());
+			sum += value;
+		}
+
+		sum = sum / n;
+		return sum;
+	}
+
+	public List<Point> getPopulationAsPoints(Chromosome[] generation) {
+
+		List<Point> list = new ArrayList<Point>();
+
+		for (int i = 0; i < generation.length; i++) {
+			list.add(new Point(generation[i].getGenesAsInt(), generation[i].getFenotype()));
+		}
+
+		return list;
 	}
 }
