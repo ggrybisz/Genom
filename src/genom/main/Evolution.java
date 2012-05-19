@@ -9,79 +9,82 @@ import java.util.Random;
 
 public class Evolution {
 
-	final int SPECIMEN_COUNT = 10;
+	final int populationSize = 10;
 
-	public Chromosome [] createFirstGeneration() {
+	List<Chromosome> population;
+	Random randomGenerator;
 
-		Chromosome[] generation = new Chromosome[SPECIMEN_COUNT];
+	public Evolution() {
 
-		Random randomGenerator = new Random();
-
-		for (int i = 0; i < SPECIMEN_COUNT; i++) {
-			int val = randomGenerator.nextInt(200)+100;
-			System.out.println(val);
-			generation[i] = new Chromosome(val);
-		}
-
-		return generation;
+		population = new ArrayList<Chromosome>();
+		randomGenerator = new Random();
 	}
 
-	public Chromosome[] crossingOver(Chromosome[] generation) {
+	public void createFirstGeneration() {
 
-		Chromosome[] children = new Chromosome[SPECIMEN_COUNT];
-
-		Random randomGenerator = new Random();
-
-		for (int i = 0; i < SPECIMEN_COUNT; i++) {
-			int one = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
-			int two = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
-			while (one == two)
-				two = randomGenerator.nextInt(SPECIMEN_COUNT - 1);
-
-			System.out.println(one + " with " + two);
-			Chromosome temp = generation[one]
-					.makeSingleChildWith(generation[two]);
-			children[i] = temp;
+		for (int i = 0; i < populationSize; i++) {
+			int val = randomGenerator.nextInt(200) + 100;
+			population.add(new Chromosome(val));
 		}
-
-		return children;
-	}
-
-	public Chromosome[] newGeneration(Chromosome[] oldGeneration) {
-
-		final int n = oldGeneration.length;
+		System.out.println("FIRST = "+population.toString());
 		
-		int[] values = new int[n];
+		Collections.sort(population);
+	}
+
+	public void crossingOver() {
+
+		List<Chromosome> children = new ArrayList<Chromosome>();
+
+		for (int i = 0; i < populationSize; i++) {
+			int one = randomGenerator.nextInt(populationSize - 1);
+			int two = randomGenerator.nextInt(populationSize - 1);
+			while (one == two)
+				two = randomGenerator.nextInt(populationSize - 1);
+
+			//System.out.println(one + " with " + two);
+			Chromosome temp = population.get(one).makeSingleChildWith(population.get(two));
+			children.add(temp);
+		}
+
+		population = children;
+	}
+
+	public void newGenerationRoulette() {
+
+		List<Chromosome> newGeneration = new ArrayList<Chromosome>();
+		
+		int[] values = new int[populationSize];
 		int sumOfValues = 0;
 
-		int[] genes = new int[n];
-
-		for (int i = 0; i < n; i++) {
+		int[] genes = new int[populationSize];
+/*
+		for (int i = 0; i < populationSize; i++) {
 			genes[i] = oldGeneration[i].getGenesAsInt();
 		}
 		System.out.println("GEN = " + Arrays.toString(genes));
-
+*/
 		// selekcja - ruletka
 		// wyliczenie wartości funkcji celu dla wszystkich osobników
 
-		for (int i = 0; i < n; i++) {
-			int value = Function.xSquare(genes[i]);
+		for (int i = 0; i < populationSize; i++) {
+			int value = population.get(i).getFenotype();
 			values[i] = value;
 			sumOfValues += value;
 		}
 		System.out.println("VA = " + Arrays.toString(values));
 		// obliczenie prawdopodobieństwa wyboru osobnika
-		double[] probabilityTable = new double[n];
+		
+		double[] probabilityTable = new double[populationSize];
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < populationSize; i++) {
 			probabilityTable[i] = (double) values[i] / (double) sumOfValues;
 		}
 		System.out.println("PRO = " + Arrays.toString(probabilityTable));
 		// Obliczenie skumulowanego rozkładu prawd ?? chyba
 
-		double[] qTable = new double[n];
+		double[] qTable = new double[populationSize];
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < populationSize; i++) {
 
 			for (int j = 0; j <= i; j++) {
 				qTable[i] += probabilityTable[j];
@@ -90,19 +93,19 @@ public class Evolution {
 		System.out.println("QT = " + Arrays.toString(qTable));
 
 		// generowanie n liczb losowych z zakresu 0,1
-		Random doubleGenerator = new Random();
-		double[] randTable = new double[n];
+		randomGenerator = new Random();
+		double[] randTable = new double[populationSize];
 
-		for (int i = 0; i < n; i++) {
-			randTable[i] = doubleGenerator.nextDouble();
+		for (int i = 0; i < populationSize; i++) {
+			randTable[i] = randomGenerator.nextDouble();
 		}
 		System.out.println("RAN = " + Arrays.toString(randTable));
 		// wybieramy osobniki
 
-		int[] idTable = new int[n];
+		int[] idTable = new int[populationSize];
 
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
+		for (int i = 0; i < populationSize; i++) {
+			for (int j = 0; j < populationSize; j++) {
 				if (randTable[i] <= qTable[j]) {
 					idTable[i] = j;
 					break;
@@ -113,49 +116,46 @@ public class Evolution {
 		System.out.println("ID = " + Arrays.toString(idTable));
 		// ============================
 
-		Chromosome[] newGeneration = new Chromosome[n];
-
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < populationSize; i++) {
 
 			int chromosomeId = idTable[i];
-			int newGenes = oldGeneration[chromosomeId].getGenesAsInt();
-			newGeneration[i] = new Chromosome(newGenes);
+			int newGenes = population.get(chromosomeId).getGenesAsInt();
+			newGeneration.add(new Chromosome(newGenes));
 		}
 
-		return newGeneration;
+		population = newGeneration;
 	}
 
-	public int getBestSpecimen(Chromosome[] generation) {
-		int max = 0;
+	public int getBestSpecimen() {
+		/*int max = 0;
 		for (Chromosome chr : generation) {
 			if (chr.getGenesAsInt() > max) {
 				max = chr.getGenesAsInt();
 			}
 		}
-		return max;
+		return max;*/
+		
+		return Collections.max(population).getGenesAsInt();
 	}
 
-	public double getAverageFitness(Chromosome[] generation) {
+	public double getAverageFitness() {
 
-		int n = generation.length;
 		double sum = 0;
-		for (int i = 0; i < n; i++) {
-			int value = Function.xSquare(generation[i].getGenesAsInt());
+		for (Chromosome chromosome : population) {
+			int value = chromosome.getFenotype();
 			sum += value;
 		}
-
-		sum = sum / n;
+		sum = sum / populationSize;
 		return sum;
 	}
 
-	public List<Point> getPopulationAsPoints(Chromosome[] generation) {
+	public List<Point> getPopulationAsPoints() {
 
 		List<Point> list = new ArrayList<Point>();
 
-		for (int i = 0; i < generation.length; i++) {
-			list.add(new Point(generation[i].getGenesAsInt(), generation[i].getFenotype()));
+		for (Chromosome chromosome : population) {
+			list.add(new Point(chromosome.getGenesAsInt(), chromosome.getFenotype()));
 		}
-
 		return list;
 	}
 }

@@ -138,4 +138,9 @@ public class Chromosome implements Comparable<Chromosome>{
 		else
 			return 0;
 	}
+	@Override
+	public String toString() {
+		
+		return Integer.toString(getGenesAsInt()); 
+	}
 }
