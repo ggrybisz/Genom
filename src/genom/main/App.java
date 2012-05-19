@@ -2,28 +2,19 @@ package genom.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.util.List;
+import java.util.Collections;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.plaf.SliderUI;
 
 public class App {
 
-	//final int GEN_COUNT = 100;
 	final static int MAX_X_NUM = 1024;
 	int[] data;
 
 	static Plot plot;
-
-	// final int maxX = 10;
+	static JPanel sidePanel;
 
 	public static int[] createXTable(int max) {
 		int[] table = new int[max];
@@ -48,10 +39,14 @@ public class App {
 		
 		frame.add(plot, BorderLayout.CENTER);
 		
+		//sidePanel = new JPanel();
+		//frame.add(sidePanel, BorderLayout.EAST);
+		//sidePanel.setBorder(BorderFactory.createEtchedBorder());
+		
 		Function f = new Function();
 		f.calculate(createXTable(MAX_X_NUM));
 		
-		plot.setPlotPoints(f.getPlotData());		
+		plot.setPlotPoints(f.getPlotData());	
 		
 		try {
 			app.performEvolution();
@@ -77,15 +72,17 @@ public class App {
 		while(stop>0) {
 			
 			plot.setPopulation(evo.getPopulationAsPoints(generation));
+			Thread.sleep(500);
 			
 			System.out.println("Generation " + i++);
+			
 			Chromosome[] cross = evo.crossingOver(generation);
 			generation = evo.newGeneration(cross);
 			double newAverage = evo.getAverageFitness(generation);
 			System.out.println("AVERAGE = " + newAverage);
 			best = evo.getBestSpecimen(generation);
 			System.out.println("MAX = " + best);
-			Thread.sleep(500);
+			
 			stop = oldAverage - newAverage;
 			stop = (stop < 0) ? (-stop) : stop;
 				

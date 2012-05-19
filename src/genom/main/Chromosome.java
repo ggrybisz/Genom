@@ -2,19 +2,25 @@ package genom.main;
 
 import java.util.Random;
 
-public class Chromosome {
+public class Chromosome implements Comparable<Chromosome>{
 
-	int[] genes;
+	public static final int GENES_SIZE = 10; 
+		
+	private int[] genes;
+	
+	private Random randomGenerator;
 
 	public Chromosome() {
-
+		randomGenerator = new Random();
 	}
 
 	public Chromosome(int value) {
+		this();
 		setGenes(value);
 	}
 
 	public Chromosome(int[] genes) {
+		this();
 		setGenes(genes);
 	}
 
@@ -58,7 +64,7 @@ public class Chromosome {
 	// Mutacja - zamiana losowego genu
 	public void mutate() {
 
-		Random randomGenerator = new Random();
+		randomGenerator = new Random();
 		int mutationPoint = randomGenerator.nextInt(9);
 
 		genes[mutationPoint] = genes[mutationPoint] == 0 ? 1 : 0;
@@ -67,7 +73,7 @@ public class Chromosome {
 
 	public Chromosome[] makeChildrenWith(Chromosome partner) {
 
-		Random randomGenerator = new Random();
+		randomGenerator = new Random();
 		int cutPoint = randomGenerator.nextInt(8);
 
 		int[] one = new int[10];
@@ -96,7 +102,7 @@ public class Chromosome {
 	
 	public Chromosome makeSingleChildWith(Chromosome partner){
 		
-		Random randomGenerator = new Random();
+		randomGenerator = new Random();
 		int cutPoint = randomGenerator.nextInt(9);
 		//int cutPoint = 3;
 
@@ -117,5 +123,19 @@ public class Chromosome {
 		Chromosome child = new Chromosome(one);
 
 		return child;
+	}
+
+	@Override
+	public int compareTo(Chromosome compared) {
+		
+		int one = this.getFenotype();
+		int two = compared.getFenotype();
+		
+		if(one<two)
+			return 1;
+		else if(one>two)
+			return -1;
+		else
+			return 0;
 	}
 }

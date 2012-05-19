@@ -95,6 +95,7 @@ public class Plot extends JComponent {
 			double x2 = x1;
 			double y2 = y1 + 10;
 			graphics2d.draw(new Line2D.Double(x1, y1, x2, y2));
+			graphics2d.drawString(Integer.toString(i), (float)x1, (float)y2+10);
 		}
 
 		repaint();

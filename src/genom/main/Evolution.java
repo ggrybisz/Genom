@@ -3,6 +3,7 @@ package genom.main;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -10,14 +11,14 @@ public class Evolution {
 
 	final int SPECIMEN_COUNT = 10;
 
-	public Chromosome[] createFirstGeneration() {
+	public Chromosome [] createFirstGeneration() {
 
 		Chromosome[] generation = new Chromosome[SPECIMEN_COUNT];
 
 		Random randomGenerator = new Random();
 
 		for (int i = 0; i < SPECIMEN_COUNT; i++) {
-			int val = randomGenerator.nextInt(1023);
+			int val = randomGenerator.nextInt(200)+100;
 			System.out.println(val);
 			generation[i] = new Chromosome(val);
 		}
@@ -49,7 +50,7 @@ public class Evolution {
 	public Chromosome[] newGeneration(Chromosome[] oldGeneration) {
 
 		final int n = oldGeneration.length;
-
+		
 		int[] values = new int[n];
 		int sumOfValues = 0;
 
