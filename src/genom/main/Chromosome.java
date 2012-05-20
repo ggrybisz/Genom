@@ -74,13 +74,13 @@ public class Chromosome implements Comparable<Chromosome>{
 	public Chromosome[] makeChildrenWith(Chromosome partner) {
 
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(8);
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE-2)+1;
 
-		int[] one = new int[10];
+		int[] one = new int[GENES_SIZE];
 		for (int i = 0; i < one.length; i++) {
 			one[i] = this.genes[i];
 		}
-		int[] two = new int[10];
+		int[] two = new int[GENES_SIZE];
 		for (int i = 0; i < one.length; i++) {
 			two[i] = partner.getGenesAsArray()[i];
 		}
@@ -103,7 +103,7 @@ public class Chromosome implements Comparable<Chromosome>{
 	public Chromosome makeSingleChildWith(Chromosome partner){
 		
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(9);
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE-2)+1;
 		//int cutPoint = 3;
 
 		int[] one = new int[10];

@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -28,13 +29,16 @@ public class Plot extends JComponent {
 	private List<Point> plotPoints;
 	private List<Point> population;
 
+	
 	public Plot(int w, int h) {
 
+		plotPoints = new ArrayList<Point>();
+		population = new ArrayList<Point>();
+		
 		setDoubleBuffered(false);
 
 		setWidth(w);
 		setHeight(h);
-
 	}
 
 	public void setWidth(int w) {
@@ -53,7 +57,7 @@ public class Plot extends JComponent {
 		this.scaleY = scaleY;
 	}
 
-	public void paint(Graphics g) {
+	public void paintComponent(Graphics g) {
 
 		super.paintComponent(g);
 

@@ -10,6 +10,7 @@ import java.util.Random;
 public class Evolution {
 
 	final int populationSize = 10;
+	int parentUsePercent = 10; //procent najlepszych rodziców przy elityzmie
 
 	List<Chromosome> population;
 	Random randomGenerator;
@@ -26,8 +27,8 @@ public class Evolution {
 			int val = randomGenerator.nextInt(200) + 100;
 			population.add(new Chromosome(val));
 		}
-		System.out.println("FIRST = "+population.toString());
-		
+		System.out.println("FIRST = " + population.toString());
+
 		Collections.sort(population);
 	}
 
@@ -41,28 +42,99 @@ public class Evolution {
 			while (one == two)
 				two = randomGenerator.nextInt(populationSize - 1);
 
-			//System.out.println(one + " with " + two);
-			Chromosome temp = population.get(one).makeSingleChildWith(population.get(two));
+			// System.out.println(one + " with " + two);
+			Chromosome temp = population.get(one).makeSingleChildWith(
+					population.get(two));
 			children.add(temp);
 		}
 
 		population = children;
 	}
 
+	public void newGenerationTournament() {
+
+		Collections.sort(population);
+		List<Chromosome> newGeneration = new ArrayList<Chromosome>();
+
+		while (newGeneration.size() < populationSize * (1.0 - (parentUsePercent / 100.0))) {
+			int size = populationSize;
+
+			// 4 różne osobniki
+
+			int i = randomGenerator.nextInt(size);
+			int j, k, l;
+			j = k = l = i;
+			while (j == i)
+				j = randomGenerator.nextInt(size);
+			while (k == i || k == j)
+				k = randomGenerator.nextInt(size);
+			while (l == i || l == j || k == l)
+				l = randomGenerator.nextInt(size);
+
+			Chromosome c1 = population.get(i);
+			Chromosome c2 = population.get(j);
+			Chromosome c3 = population.get(k);
+			Chromosome c4 = population.get(l);
+
+			int f1 = c1.getFenotype();
+			int f2 = c2.getFenotype();
+			int f3 = c3.getFenotype();
+			int f4 = c4.getFenotype();
+
+			Chromosome w1, w2;
+
+			if (f1 > f2)
+				w1 = c1;
+			else
+				w1 = c2;
+
+			if (f2 > f4)
+				w2 = c3;
+			else
+				w2 = c4;
+
+			Chromosome child1, child2;
+
+			Chromosome[] children = w1.makeChildrenWith(w2);
+
+			child1 = children[0];
+			child2 = children[1];
+
+			double mutatePercent = 0.01;
+			boolean m1 = randomGenerator.nextFloat() <= mutatePercent;
+			boolean m2 = randomGenerator.nextFloat() <= mutatePercent;
+
+			if (m1)
+				child1.mutate();
+			if (m2)
+				child2.mutate();
+
+			boolean isChild1Good = child1.getFenotype() >= w1.getFenotype();
+			boolean isChild2Good = child2.getFenotype() >= w2.getFenotype();
+
+			newGeneration.add(isChild1Good ? child1 : w1);
+			newGeneration.add(isChild2Good ? child2 : w2);
+		}
+		//dodanie 
+		int j = (int)(populationSize*parentUsePercent/100.0);
+		for(int i=0;i<j;i++){
+			newGeneration.add(population.get(i));
+		}
+		population = newGeneration;
+		Collections.sort(population);
+	}
+
 	public void newGenerationRoulette() {
 
 		List<Chromosome> newGeneration = new ArrayList<Chromosome>();
-		
+
+		System.out.println("POP = " + population.toString());
+
 		int[] values = new int[populationSize];
 		int sumOfValues = 0;
 
 		int[] genes = new int[populationSize];
-/*
-		for (int i = 0; i < populationSize; i++) {
-			genes[i] = oldGeneration[i].getGenesAsInt();
-		}
-		System.out.println("GEN = " + Arrays.toString(genes));
-*/
+
 		// selekcja - ruletka
 		// wyliczenie wartości funkcji celu dla wszystkich osobników
 
@@ -73,7 +145,7 @@ public class Evolution {
 		}
 		System.out.println("VA = " + Arrays.toString(values));
 		// obliczenie prawdopodobieństwa wyboru osobnika
-		
+
 		double[] probabilityTable = new double[populationSize];
 
 		for (int i = 0; i < populationSize; i++) {
@@ -127,14 +199,6 @@ public class Evolution {
 	}
 
 	public int getBestSpecimen() {
-		/*int max = 0;
-		for (Chromosome chr : generation) {
-			if (chr.getGenesAsInt() > max) {
-				max = chr.getGenesAsInt();
-			}
-		}
-		return max;*/
-		
 		return Collections.max(population).getGenesAsInt();
 	}
 
@@ -154,7 +218,8 @@ public class Evolution {
 		List<Point> list = new ArrayList<Point>();
 
 		for (Chromosome chromosome : population) {
-			list.add(new Point(chromosome.getGenesAsInt(), chromosome.getFenotype()));
+			list.add(new Point(chromosome.getGenesAsInt(), chromosome
+					.getFenotype()));
 		}
 		return list;
 	}
