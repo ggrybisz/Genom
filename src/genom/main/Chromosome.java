@@ -1,13 +1,18 @@
 package genom.main;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
-public class Chromosome implements Comparable<Chromosome>{
+public class Chromosome implements Comparable<Chromosome> {
 
-	public static final int GENES_SIZE = 10; 
-		
+	public static final int GENES_SIZE = 10;
+	private final double min1 = 0;
+	private final double max1 = 1023;
+	private final double min2 = 0;
+	private final double max2 = 10;
+
 	private int[] genes;
-	
+
 	private Random randomGenerator;
 
 	public Chromosome() {
@@ -35,10 +40,10 @@ public class Chromosome implements Comparable<Chromosome>{
 
 	public void setGenes(int[] genes) {
 
-		int [] gen = new int [genes.length] ;
-		for(int i = 0; i<genes.length;i++)
+		int[] gen = new int[genes.length];
+		for (int i = 0; i < genes.length; i++)
 			gen[i] = genes[i];
-		
+
 		this.genes = gen;
 	}
 
@@ -52,13 +57,21 @@ public class Chromosome implements Comparable<Chromosome>{
 
 		return value;
 	}
+	
+	public double getGenotype(){
+		
+		return changeRange(min1, max1, min2, max2, getGenesAsInt());
+	}
 
 	public int[] getGenesAsArray() {
 		return genes;
 	}
-	
-	public int getFenotype(){
-		return Function.xSquare(this.getGenesAsInt());
+
+	public double getFenotype() {
+		
+		double x = changeRange(min1, max1, min2, max2, getGenesAsInt());
+		
+		return Function.xSquare(x);
 	}
 
 	// Mutacja - zamiana losowego genu
@@ -74,7 +87,7 @@ public class Chromosome implements Comparable<Chromosome>{
 	public Chromosome[] makeChildrenWith(Chromosome partner) {
 
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(GENES_SIZE-2)+1;
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
 
 		int[] one = new int[GENES_SIZE];
 		for (int i = 0; i < one.length; i++) {
@@ -99,12 +112,12 @@ public class Chromosome implements Comparable<Chromosome>{
 
 		return children;
 	}
-	
-	public Chromosome makeSingleChildWith(Chromosome partner){
-		
+
+	public Chromosome makeSingleChildWith(Chromosome partner) {
+
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(GENES_SIZE-2)+1;
-		//int cutPoint = 3;
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
+		// int cutPoint = 3;
 
 		int[] one = new int[10];
 		for (int i = 0; i < one.length; i++) {
@@ -115,9 +128,9 @@ public class Chromosome implements Comparable<Chromosome>{
 			two[i] = partner.getGenesAsArray()[i];
 		}
 		for (int i = cutPoint; i < 10; i++) {
-			
+
 			one[i] = two[i];
-			
+
 		}
 
 		Chromosome child = new Chromosome(one);
@@ -125,22 +138,34 @@ public class Chromosome implements Comparable<Chromosome>{
 		return child;
 	}
 
+	private double changeRange(double oldMin, double oldMax, double newMin,
+			double newMax, double value) {
+
+		double oldRange = oldMax - oldMin;
+		double newRange = newMax - newMin;
+
+		double newValue = ((((value - oldMin) * newRange) / oldRange) + newMin);
+		
+		return newValue;
+	}
+
 	@Override
 	public int compareTo(Chromosome compared) {
-		
-		int one = this.getFenotype();
-		int two = compared.getFenotype();
-		
-		if(one<two)
+
+		double one = this.getFenotype();
+		double two = compared.getFenotype();
+
+		if (one < two)
 			return 1;
-		else if(one>two)
+		else if (one > two)
 			return -1;
 		else
 			return 0;
 	}
+
 	@Override
 	public String toString() {
-		
-		return Integer.toString(getGenesAsInt()); 
+
+		return Integer.toString(getGenesAsInt());
 	}
 }

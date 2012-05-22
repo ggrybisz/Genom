@@ -20,11 +20,21 @@ public class Function {
 		}
 	}
 
-	public static int xSquare(int x) {
+	public static double xSquare(double x) {
+		return x * x;
+	}
+	
+	public static int xSquare(int x){
 		return x * x;
 	}
 
 	public List<Point> getPlotData() {
 		return plotData;
+	}
+	
+	public static double roundToTwo(double input){
+		double result = input * 100;
+		result = Math.round(result);
+		return result/100;
 	}
 }
