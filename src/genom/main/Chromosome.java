@@ -1,6 +1,5 @@
 package genom.main;
 
-import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Chromosome implements Comparable<Chromosome> {
@@ -47,7 +46,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		this.genes = gen;
 	}
 
-	public int getGenesAsInt() {
+	public int getRawGenes() {
 
 		int value = 0;
 
@@ -57,20 +56,23 @@ public class Chromosome implements Comparable<Chromosome> {
 
 		return value;
 	}
-	
-	public double getGenotype(){
-		
-		return changeRange(min1, max1, min2, max2, getGenesAsInt());
+
+	public double getGenotype() {
+
+		return changeRange(min1, max1, min2, max2, getRawGenes());
 	}
 
 	public int[] getGenesAsArray() {
 		return genes;
 	}
 
+	public int getRawFenotype(){
+		return Function.xSquare(getRawGenes());
+	}
 	public double getFenotype() {
-		
-		double x = changeRange(min1, max1, min2, max2, getGenesAsInt());
-		
+
+		double x = changeRange(min1, max1, min2, max2, getRawGenes());
+
 		return Function.xSquare(x);
 	}
 
@@ -145,7 +147,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		double newRange = newMax - newMin;
 
 		double newValue = ((((value - oldMin) * newRange) / oldRange) + newMin);
-		
+
 		return newValue;
 	}
 
@@ -166,6 +168,6 @@ public class Chromosome implements Comparable<Chromosome> {
 	@Override
 	public String toString() {
 
-		return Integer.toString(getGenesAsInt());
+		return Integer.toString(getRawGenes());
 	}
 }

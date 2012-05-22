@@ -72,8 +72,8 @@ public abstract class Evolution {
 		List<Point> list = new ArrayList<Point>();
 
 		for (Chromosome chromosome : population) {
-			list.add(new Point((int) chromosome.getGenesAsInt(),
-					(int) chromosome.getFenotype()));
+			list.add(new Point((int) chromosome.getRawGenes(),
+					(int) chromosome.getRawFenotype()));
 		}
 		return list;
 	}

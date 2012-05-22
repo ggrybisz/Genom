@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JSlider;
 
 @SuppressWarnings("serial")
 public class Plot extends JComponent {
@@ -87,8 +86,9 @@ public class Plot extends JComponent {
 	private void drawSetup() {
 		// linia pionowa - Y
 		graphics2d.draw(new Line2D.Double(PAD, PAD, PAD, height - PAD));
-		graphics2d.draw(new Line2D.Double(PAD, PAD, PAD-10, PAD));
-		graphics2d.drawString(Integer.toString(maxYValue), (float) PAD -10,(float) PAD-5);
+		graphics2d.draw(new Line2D.Double(PAD, PAD, PAD - 10, PAD));
+		graphics2d.drawString(Integer.toString(maxYValue), (float) PAD - 10,
+				(float) PAD - 5);
 		// linia pozioma - X
 		graphics2d.draw(new Line2D.Double(PAD, height - PAD, width - PAD,
 				height - PAD));

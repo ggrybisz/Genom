@@ -106,7 +106,7 @@ public class App extends JFrame {
 		outputPanel.add(bestLabel);
 
 		avgLabel = new JLabel("Average f(x) = ");
-		avgLabel.setBounds(10, 85, 200, 23);
+		avgLabel.setBounds(10, 79, 200, 23);
 		outputPanel.add(avgLabel);
 
 		JPanel plotPanel = new JPanel();

@@ -37,7 +37,7 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 
 			evolution.newGeneration();
 
-			int best = evolution.getBestSpecimen().getGenesAsInt();
+			int best = evolution.getBestSpecimen().getRawGenes();
 			double bestDouble = evolution.getBestSpecimen().getGenotype();
 
 			results.setBest(best, bestDouble);

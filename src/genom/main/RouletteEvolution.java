@@ -74,7 +74,7 @@ public class RouletteEvolution extends Evolution {
 		for (int i = 0; i < populationSize; i++) {
 
 			int chromosomeId = idTable[i];
-			int newGenes = population.get(chromosomeId).getGenesAsInt();
+			int newGenes = population.get(chromosomeId).getRawGenes();
 			newGeneration.add(new Chromosome(newGenes));
 		}
 
