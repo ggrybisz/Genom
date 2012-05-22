@@ -1,21 +1,29 @@
 package genom.main;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class App extends JFrame {
 
@@ -38,6 +46,7 @@ public class App extends JFrame {
 
 	private boolean isFast = false;
 	private JComboBox selectionMethodBox;
+	private JSlider plotScaleSlider;
 
 	/**
 	 * Launch the application.
@@ -60,9 +69,22 @@ public class App extends JFrame {
 	 * Create the frame.
 	 */
 	public App() {
+		
+		try {
+            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+		
 		setTitle("Genom");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 470);
+		setBounds(100, 100, 740, 470);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -71,7 +93,7 @@ public class App extends JFrame {
 		JPanel outputPanel = new JPanel();
 		outputPanel
 				.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		outputPanel.setBounds(420, 11, 254, 171);
+		outputPanel.setBounds(459, 10, 254, 171);
 		contentPane.add(outputPanel);
 		outputPanel.setLayout(null);
 
@@ -89,7 +111,7 @@ public class App extends JFrame {
 
 		JPanel plotPanel = new JPanel();
 		plotPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		plotPanel.setBounds(10, 10, 400, 410);
+		plotPanel.setBounds(10, 10, 439, 410);
 		contentPane.add(plotPanel);
 		plotPanel.setLayout(new BorderLayout(0, 0));
 
@@ -100,7 +122,7 @@ public class App extends JFrame {
 		JPanel optionPanel = new JPanel();
 		optionPanel
 				.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		optionPanel.setBounds(420, 193, 254, 227);
+		optionPanel.setBounds(459, 193, 254, 227);
 		contentPane.add(optionPanel);
 
 		fastModeCheckbox = new JCheckBox("Fast mode");
@@ -130,12 +152,12 @@ public class App extends JFrame {
 		startButton.setBounds(35, 166, 75, 23);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if(selectionMethodBox.getSelectedIndex()==0)
+
+				if (selectionMethodBox.getSelectedIndex() == 0)
 					evolution = new RouletteEvolution();
-				else if(selectionMethodBox.getSelectedIndex()==1)
+				else if (selectionMethodBox.getSelectedIndex() == 1)
 					evolution = new TournamentEvolution();
-				
+
 				GeneticAlgorithmTask genetics = new GeneticAlgorithmTask(
 						evolution, informable);
 				genetics.setFastMode(isFast);
@@ -145,17 +167,32 @@ public class App extends JFrame {
 		optionPanel.setLayout(null);
 
 		optionPanel.add(startButton);
-		
+
 		selectionMethodBox = new JComboBox();
-		selectionMethodBox.setModel(new DefaultComboBoxModel(new String[] {"Roulette", "Tournament"}));
+		selectionMethodBox.setModel(new DefaultComboBoxModel(new String[] {
+				"Roulette", "Tournament" }));
 		selectionMethodBox.setBounds(35, 76, 108, 20);
 		optionPanel.add(selectionMethodBox);
 
-		
 		Function f = new Function();
 		f.calculate(createXTable(MAX_X_NUM));
 
 		plot.setPlotPoints(f.getPlotData());
+		
+		plotScaleSlider = new JSlider();
+		plotScaleSlider.setMinimum(1);
+		plotScaleSlider.setPaintTicks(true);
+		plotScaleSlider.setOrientation(SwingConstants.VERTICAL);
+		plotPanel.add(plotScaleSlider, BorderLayout.WEST);
+		plotScaleSlider.setMaximum(plot.getMaxYValue());
+		plotScaleSlider.setValue(plot.getMaxYValue());
+		plotScaleSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				
+				int value = ((JSlider) arg0.getSource()).getValue();
+				plot.setMaxYValue(value);
+			}
+		});
 	}
 
 	public static int[] createXTable(int max) {

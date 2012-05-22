@@ -8,11 +8,10 @@ import java.util.Random;
 
 public abstract class Evolution {
 
-	final int populationSize = 20;
-	int parentUsePercent = 10; // procent najlepszych rodziców przy elityzmie
+	protected final int populationSize = 20;
 
-	List<Chromosome> population;
-	Random randomGenerator;
+	protected List<Chromosome> population;
+	protected Random randomGenerator;
 
 	public Evolution() {
 

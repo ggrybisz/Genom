@@ -6,6 +6,8 @@ import java.util.List;
 
 public class TournamentEvolution extends Evolution {
 
+	int parentUsePercent = 10; // procent najlepszych rodziców przy elityzmie
+	
 	@Override
 	public void newGeneration() {
 

@@ -21,11 +21,11 @@ public class Function {
 	}
 
 	public static double xSquare(double x) {
-		return x * x;
+		return x*x;
 	}
 	
 	public static int xSquare(int x){
-		return x * x;
+		return x*x;
 	}
 
 	public List<Point> getPlotData() {
