@@ -8,7 +8,7 @@ import java.util.Random;
 
 public abstract class Evolution {
 
-	protected final int populationSize = 20;
+	protected int populationSize = 20;
 
 	protected List<Chromosome> population;
 	protected Random randomGenerator;
@@ -18,6 +18,7 @@ public abstract class Evolution {
 		population = new ArrayList<Chromosome>();
 		randomGenerator = new Random();
 	}
+	
 
 	public void createFirstGeneration() {
 
@@ -50,10 +51,9 @@ public abstract class Evolution {
 		population = children;
 	}
 
-	public abstract void newGeneration();
-
 	public Chromosome getBestSpecimen() {
-		return Collections.max(population);
+		Collections.sort(population);
+		return population.get(0);//Collections.max(population);
 	}
 
 	public double getAverageFitness() {
@@ -77,4 +77,6 @@ public abstract class Evolution {
 		}
 		return list;
 	}
+	
+	public abstract void newGeneration();
 }

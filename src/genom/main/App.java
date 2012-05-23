@@ -24,6 +24,8 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.JTextField;
+import javax.swing.JProgressBar;
 
 public class App extends JFrame {
 
@@ -34,6 +36,8 @@ public class App extends JFrame {
 	int plotSize = 400;
 	int appHeight = 450;
 	int appWidth = plotSize + 300;
+	
+	int initialPopulationSize = 20;
 
 	int[] data;
 
@@ -47,6 +51,8 @@ public class App extends JFrame {
 	private boolean isFast = false;
 	private JComboBox selectionMethodBox;
 	private JSlider plotScaleSlider;
+	private JTextField populationSizeTextField;
+	private JProgressBar progressBar;
 
 	/**
 	 * Launch the application.
@@ -98,16 +104,21 @@ public class App extends JFrame {
 		outputPanel.setLayout(null);
 
 		generationLabel = new JLabel("Generation = ");
-		generationLabel.setBounds(10, 11, 200, 23);
+		generationLabel.setBounds(16, 21, 120, 14);
 		outputPanel.add(generationLabel);
 
 		bestLabel = new JLabel("Best specimen = ");
-		bestLabel.setBounds(10, 45, 200, 23);
+		bestLabel.setBounds(16, 46, 150, 14);
 		outputPanel.add(bestLabel);
 
 		avgLabel = new JLabel("Average f(x) = ");
-		avgLabel.setBounds(10, 79, 200, 23);
+		avgLabel.setBounds(16, 71, 150, 14);
 		outputPanel.add(avgLabel);
+		
+		progressBar = new JProgressBar();
+		int barWidth = 100;
+		progressBar.setBounds((outputPanel.getWidth()/2)-(barWidth/2), 132, barWidth, 14);
+		outputPanel.add(progressBar);
 
 		JPanel plotPanel = new JPanel();
 		plotPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -152,16 +163,20 @@ public class App extends JFrame {
 		startButton.setBounds(35, 166, 75, 23);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
+				int populationSize = Integer.parseInt(populationSizeTextField.getText());
+				
 				if (selectionMethodBox.getSelectedIndex() == 0)
-					evolution = new RouletteEvolution();
+					evolution = new RouletteEvolution(populationSize);
 				else if (selectionMethodBox.getSelectedIndex() == 1)
-					evolution = new TournamentEvolution();
+					evolution = new TournamentEvolution(populationSize);
 
 				GeneticAlgorithmTask genetics = new GeneticAlgorithmTask(
 						evolution, informable);
 				genetics.setFastMode(isFast);
+				
+				progressBar.setIndeterminate(true);
 				genetics.execute();
+			
 			}
 		});
 		optionPanel.setLayout(null);
@@ -173,6 +188,16 @@ public class App extends JFrame {
 				"Roulette", "Tournament" }));
 		selectionMethodBox.setBounds(35, 76, 108, 20);
 		optionPanel.add(selectionMethodBox);
+		
+		JLabel populationSizeLabel = new JLabel("Population size:");
+		populationSizeLabel.setBounds(35, 28, 86, 14);
+		optionPanel.add(populationSizeLabel);
+		
+		populationSizeTextField = new JTextField();
+		populationSizeTextField.setBounds(131, 25, 86, 20);
+		optionPanel.add(populationSizeTextField);
+		populationSizeTextField.setColumns(10);
+		populationSizeTextField.setText(Integer.toString(initialPopulationSize));
 
 		Function f = new Function();
 		f.calculate(createXTable(MAX_X_NUM));

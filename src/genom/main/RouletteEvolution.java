@@ -7,6 +7,15 @@ import java.util.Random;
 
 public class RouletteEvolution extends Evolution {
 
+	public RouletteEvolution() {
+		super();
+	}
+	
+	public RouletteEvolution(int populationSize){
+		this();
+		this.populationSize = populationSize;
+	}
+	
 	@Override
 	public void newGeneration() {
 		List<Chromosome> newGeneration = new ArrayList<Chromosome>();

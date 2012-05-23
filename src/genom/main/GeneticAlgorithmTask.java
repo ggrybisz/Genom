@@ -29,8 +29,6 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 			ResultsContainer results = new ResultsContainer();
 			results.setPlotData(evolution.getPopulationAsPoints());
 
-			Thread.sleep(slow);
-
 			results.setGeneration(generation);
 
 			evolution.crossingOver();
@@ -55,7 +53,10 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 			stop = (stop < 0) ? (-stop) : stop;
 
 			oldAverage = newAverage;
+			Thread.sleep(slow);
 			generation++;
+
+			
 
 		} while (stop > 0.01 && generation <= maxGenerations);
 
@@ -69,7 +70,7 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 	}
 
 	public void setFastMode(boolean fast) {
-		if(fast)
+		if (fast)
 			slow = 0;
 		else
 			slow = 1000;

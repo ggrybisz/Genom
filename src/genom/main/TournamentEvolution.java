@@ -8,6 +8,15 @@ public class TournamentEvolution extends Evolution {
 
 	int parentUsePercent = 10; // procent najlepszych rodziców przy elityzmie
 	
+	public TournamentEvolution() {
+		super();
+	}
+	
+	public TournamentEvolution(int populationSize){
+		this();
+		this.populationSize = populationSize;
+	}
+	
 	@Override
 	public void newGeneration() {
 
