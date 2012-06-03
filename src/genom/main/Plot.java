@@ -35,7 +35,7 @@ public class Plot extends JComponent {
 		plotPoints = new ArrayList<Point>();
 		population = new ArrayList<Point>();
 
-		setDoubleBuffered(false);
+		setDoubleBuffered(true);
 		setWidth(w);
 		setHeight(h);
 	}
@@ -61,6 +61,8 @@ public class Plot extends JComponent {
 		super.paintComponent(g);
 
 		if (image == null) {
+			// image = new BufferedImage(width, height,
+			// BufferedImage.TYPE_INT_RGB);
 			image = createImage(width, height);
 			graphics2d = (Graphics2D) image.getGraphics();
 			graphics2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -71,16 +73,16 @@ public class Plot extends JComponent {
 		graphics2d.setPaint(Color.BLACK);
 		drawSetup();
 		drawPlot();
+
 		drawPopulation();
 
 		g.drawImage(image, 0, 0, null);
+
 	}
 
 	public void clear() {
 		graphics2d.setPaint(getBackground());
 		graphics2d.fillRect(0, 0, width, height);
-		repaint();
-
 	}
 
 	private void drawSetup() {
@@ -102,8 +104,6 @@ public class Plot extends JComponent {
 			graphics2d.drawString(Integer.toString(i), (float) x1,
 					(float) y2 + 10);
 		}
-
-		repaint();
 	}
 
 	public void drawScaledPoint(double x, double y, double size) {
@@ -121,23 +121,18 @@ public class Plot extends JComponent {
 
 		for (int i = 0; i < list.size(); i++) {
 
-			// g2.drawString(Integer.toString(i), (int)x, h-10);
-
-			// g2.drawString(Double.toString(list.get(i).getY()), 10, (int)y);
 			drawScaledPoint(list.get(i).getX(), list.get(i).getY(), size);
 		}
-		repaint();
-
 	}
 
 	public void drawPlot() {
 
 		drawPointList(this.plotPoints, Color.RED, 2);
-
 	}
 
 	public void drawPopulation() {
 		drawPointList(this.population, Color.BLUE, 6);
+		repaint();
 	}
 
 	private int getMax(List<Point> list) { // maksymalna wartość Y

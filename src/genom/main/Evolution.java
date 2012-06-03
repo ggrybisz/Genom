@@ -8,7 +8,7 @@ import java.util.Random;
 
 public abstract class Evolution {
 
-	protected int populationSize = 20;
+	protected int populationSize;
 
 	protected List<Chromosome> population;
 	protected Random randomGenerator;
@@ -32,25 +32,6 @@ public abstract class Evolution {
 		Collections.sort(population);
 	}
 
-	public void crossingOver() {
-
-		List<Chromosome> children = new ArrayList<Chromosome>();
-
-		for (int i = 0; i < populationSize; i++) {
-			int one = randomGenerator.nextInt(populationSize - 1);
-			int two = randomGenerator.nextInt(populationSize - 1);
-			while (one == two)
-				two = randomGenerator.nextInt(populationSize - 1);
-
-			// System.out.println(one + " with " + two);
-			Chromosome temp = population.get(one).makeSingleChildWith(
-					population.get(two));
-			children.add(temp);
-		}
-
-		population = children;
-	}
-
 	public Chromosome getBestSpecimen() {
 		Collections.sort(population);
 		return population.get(0);//Collections.max(population);
@@ -64,6 +45,7 @@ public abstract class Evolution {
 			sum += value;
 		}
 		sum = sum / populationSize;
+		
 		return sum;
 	}
 

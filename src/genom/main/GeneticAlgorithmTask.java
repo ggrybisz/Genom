@@ -22,7 +22,7 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 
 		double stop = 0;
 		int generation = 1;
-		evolution.createFirstGeneration();
+		evolution.createFirstGeneration(); //pierwsza populacja
 		double oldAverage = evolution.getAverageFitness();
 
 		do {
@@ -31,9 +31,7 @@ class GeneticAlgorithmTask extends SwingWorker<Boolean, ResultsContainer> {
 
 			results.setGeneration(generation);
 
-			evolution.crossingOver();
-
-			evolution.newGeneration();
+			evolution.newGeneration(); //nowa populacja
 
 			int best = evolution.getBestSpecimen().getRawGenes();
 			double bestDouble = evolution.getBestSpecimen().getGenotype();

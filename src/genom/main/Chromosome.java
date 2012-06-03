@@ -80,7 +80,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	public void mutate() {
 
 		randomGenerator = new Random();
-		int mutationPoint = randomGenerator.nextInt(9);
+		int mutationPoint = randomGenerator.nextInt(GENES_SIZE);
 
 		genes[mutationPoint] = genes[mutationPoint] == 0 ? 1 : 0;
 		System.out.println("MUTATION occured at " + mutationPoint);
@@ -89,7 +89,8 @@ public class Chromosome implements Comparable<Chromosome> {
 	public Chromosome[] makeChildrenWith(Chromosome partner) {
 
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
+		//int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE);
 
 		int[] one = new int[GENES_SIZE];
 		for (int i = 0; i < one.length; i++) {
@@ -118,7 +119,8 @@ public class Chromosome implements Comparable<Chromosome> {
 	public Chromosome makeSingleChildWith(Chromosome partner) {
 
 		randomGenerator = new Random();
-		int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
+		//int cutPoint = randomGenerator.nextInt(GENES_SIZE - 2) + 1;
+		int cutPoint = randomGenerator.nextInt(GENES_SIZE);
 		// int cutPoint = 3;
 
 		int[] one = new int[10];

@@ -2,6 +2,7 @@ package genom.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +19,10 @@ public class RouletteEvolution extends Evolution {
 	
 	@Override
 	public void newGeneration() {
+		Collections.sort(population);
+		
+		this.crossingOver();
+		
 		List<Chromosome> newGeneration = new ArrayList<Chromosome>();
 
 		System.out.println("POP = " + population.toString());
@@ -25,7 +30,6 @@ public class RouletteEvolution extends Evolution {
 		double[] values = new double[populationSize];
 		int sumOfValues = 0;
 
-		//int[] genes = new int[populationSize];
 
 		// selekcja - ruletka
 		// wyliczenie wartości funkcji celu dla wszystkich osobników
@@ -36,6 +40,7 @@ public class RouletteEvolution extends Evolution {
 			sumOfValues += value;
 		}
 		System.out.println("VA = " + Arrays.toString(values));
+		
 		// obliczenie prawdopodobieństwa wyboru osobnika
 
 		double[] probabilityTable = new double[populationSize];
@@ -88,6 +93,25 @@ public class RouletteEvolution extends Evolution {
 		}
 
 		population = newGeneration;
+	}
+	
+	private void crossingOver() {
+
+		List<Chromosome> children = new ArrayList<Chromosome>();
+
+		for (int i = 0; i < populationSize; i++) {
+			int one = randomGenerator.nextInt(populationSize);
+			int two = randomGenerator.nextInt(populationSize);
+			while (one == two)
+				two = randomGenerator.nextInt(populationSize);
+
+			// System.out.println(one + " with " + two);
+			Chromosome temp = population.get(one).makeSingleChildWith(
+					population.get(two));
+			children.add(temp);
+		}
+
+		population = children;
 	}
 
 }

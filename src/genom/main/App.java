@@ -1,7 +1,6 @@
 package genom.main;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,28 +14,24 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.JTextField;
-import javax.swing.JProgressBar;
 
+@SuppressWarnings("serial")
 public class App extends JFrame {
 
 	private Evolution evolution;
+	private GeneticAlgorithmTask genetics;
 	final int maxGeneration = 2000;
 	final static int MAX_X_NUM = 1024;
 
 	int plotSize = 400;
 	int appHeight = 450;
 	int appWidth = plotSize + 300;
-	
+
 	int initialPopulationSize = 20;
 
 	int[] data;
@@ -50,9 +45,9 @@ public class App extends JFrame {
 
 	private boolean isFast = false;
 	private JComboBox selectionMethodBox;
-	private JSlider plotScaleSlider;
 	private JTextField populationSizeTextField;
 	private JProgressBar progressBar;
+	private JButton startButton;
 
 	/**
 	 * Launch the application.
@@ -75,19 +70,24 @@ public class App extends JFrame {
 	 * Create the frame.
 	 */
 	public App() {
-		
+
 		try {
-            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-		
+			javax.swing.UIManager.setLookAndFeel(UIManager
+					.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(
+					java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(
+					java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(
+					java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(
+					java.util.logging.Level.SEVERE, null, ex);
+		}
+
 		setTitle("Genom");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 740, 470);
@@ -114,10 +114,11 @@ public class App extends JFrame {
 		avgLabel = new JLabel("Average f(x) = ");
 		avgLabel.setBounds(16, 71, 150, 14);
 		outputPanel.add(avgLabel);
-		
+
 		progressBar = new JProgressBar();
 		int barWidth = 100;
-		progressBar.setBounds((outputPanel.getWidth()/2)-(barWidth/2), 132, barWidth, 14);
+		progressBar.setBounds((outputPanel.getWidth() / 2) - (barWidth / 2),
+				132, barWidth, 14);
 		outputPanel.add(progressBar);
 
 		JPanel plotPanel = new JPanel();
@@ -159,24 +160,40 @@ public class App extends JFrame {
 			}
 		};
 
-		JButton startButton = new JButton("START");
-		startButton.setBounds(35, 166, 75, 23);
+		startButton = new JButton("START");
+		startButton.setBounds(35, 157, 73, 34);
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int populationSize = Integer.parseInt(populationSizeTextField.getText());
-				
-				if (selectionMethodBox.getSelectedIndex() == 0)
-					evolution = new RouletteEvolution(populationSize);
-				else if (selectionMethodBox.getSelectedIndex() == 1)
-					evolution = new TournamentEvolution(populationSize);
 
-				GeneticAlgorithmTask genetics = new GeneticAlgorithmTask(
-						evolution, informable);
-				genetics.setFastMode(isFast);
 				
-				progressBar.setIndeterminate(true);
-				genetics.execute();
-			
+				
+				if (startButton.getText().equals("START")) {
+					int populationSize = Integer
+							.parseInt(populationSizeTextField.getText());
+
+					if (selectionMethodBox.getSelectedIndex() == 0)
+						evolution = new RouletteEvolution(populationSize);
+					else if (selectionMethodBox.getSelectedIndex() == 1)
+						evolution = new TournamentEvolution(populationSize);
+
+					genetics = new GeneticAlgorithmTask(
+							evolution, informable) {
+						@Override
+						protected void done() {
+							startButton.setText("START");
+							progressBar.setIndeterminate(false);
+						}
+					};
+					genetics.setFastMode(isFast);
+
+					startButton.setText("CANCEL");
+					progressBar.setIndeterminate(true);
+					genetics.execute();
+				}
+				else
+				{
+					genetics.cancel(true);
+				}
 			}
 		});
 		optionPanel.setLayout(null);
@@ -188,36 +205,23 @@ public class App extends JFrame {
 				"Roulette", "Tournament" }));
 		selectionMethodBox.setBounds(35, 76, 108, 20);
 		optionPanel.add(selectionMethodBox);
-		
+
 		JLabel populationSizeLabel = new JLabel("Population size:");
 		populationSizeLabel.setBounds(35, 28, 86, 14);
 		optionPanel.add(populationSizeLabel);
-		
+
 		populationSizeTextField = new JTextField();
 		populationSizeTextField.setBounds(131, 25, 86, 20);
 		optionPanel.add(populationSizeTextField);
 		populationSizeTextField.setColumns(10);
-		populationSizeTextField.setText(Integer.toString(initialPopulationSize));
+		populationSizeTextField
+				.setText(Integer.toString(initialPopulationSize));
 
 		Function f = new Function();
 		f.calculate(createXTable(MAX_X_NUM));
 
 		plot.setPlotPoints(f.getPlotData());
-		
-		plotScaleSlider = new JSlider();
-		plotScaleSlider.setMinimum(1);
-		plotScaleSlider.setPaintTicks(true);
-		plotScaleSlider.setOrientation(SwingConstants.VERTICAL);
-		plotPanel.add(plotScaleSlider, BorderLayout.WEST);
-		plotScaleSlider.setMaximum(plot.getMaxYValue());
-		plotScaleSlider.setValue(plot.getMaxYValue());
-		plotScaleSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				
-				int value = ((JSlider) arg0.getSource()).getValue();
-				plot.setMaxYValue(value);
-			}
-		});
+
 	}
 
 	public static int[] createXTable(int max) {
